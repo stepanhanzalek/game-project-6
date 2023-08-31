@@ -14,6 +14,12 @@ namespace SpriteExample
 
         private SlimeGhostSprite slimeGhost;
 
+        private Texture2D atlas;
+
+        private SpriteFont bangers;
+
+        private BatSprite[] bats;
+
         /// <summary>
         /// Constructs the game
         /// </summary>
@@ -32,6 +38,12 @@ namespace SpriteExample
             // TODO: Add your initialization logic here
             slimeGhost = new SlimeGhostSprite();
 
+            bats = new BatSprite[]
+            {
+                new BatSprite(){Position = new Vector2(100, 100), Direction = Direction.Down},
+                new BatSprite(){Position = new Vector2(40, 10), Direction = Direction.Up},
+            };
+
             base.Initialize();
         }
 
@@ -44,6 +56,9 @@ namespace SpriteExample
 
             // TODO: use this.Content to load your game content here
             slimeGhost.LoadContent(Content);
+            atlas = Content.Load<Texture2D>("colored_packed");
+            foreach (BatSprite bat in bats) bat.LoadContent(Content);
+            bangers = Content.Load<SpriteFont>("bangers");
         }
 
         /// <summary>
@@ -57,7 +72,7 @@ namespace SpriteExample
 
             // TODO: Add your update logic here
             slimeGhost.Update(gameTime);
-
+            foreach (BatSprite bat in bats) bat.Update(gameTime);
             base.Update(gameTime);
         }
 
@@ -71,7 +86,9 @@ namespace SpriteExample
 
             // TODO: Add your drawing code here
             spriteBatch.Begin();
+            spriteBatch.DrawString(bangers, $"{gameTime.TotalGameTime:c}", new Vector2(100, 80), Color.White);
             slimeGhost.Draw(gameTime, spriteBatch);
+            foreach (BatSprite bat in bats) bat.Draw(gameTime, spriteBatch);
             spriteBatch.End();
 
             base.Draw(gameTime);

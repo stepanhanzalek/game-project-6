@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SpriteExample.Content;
 
@@ -19,11 +20,13 @@ namespace SpriteExample
         private SpriteFont bangers;
         private SpriteFont bangersSmall;
 
-        private Ball ball;
+        private PlayerBall playerBall;
 
         private Vector2 textSize;
 
         private Hole[] holes;
+
+        private List<Ball> balls;
 
         /// <summary>
         /// Constructs the game
@@ -43,7 +46,14 @@ namespace SpriteExample
             // TODO: Add your initialization logic here
             slimeGhost = new SlimeGhostSprite();
 
-            ball = new Ball();
+            playerBall = new PlayerBall();
+            balls = new List<Ball> {
+                new Ball(),
+                new Ball(),
+                new Ball(),
+                new Ball(),
+                new Ball(),
+            };
 
             holes = new Hole[] {
                 new Hole(),
@@ -68,8 +78,13 @@ namespace SpriteExample
             holes[0].dummy = false;
             // TODO: use this.Content to load your game content here
             slimeGhost.LoadContent(Content);
+
             atlas = Content.Load<Texture2D>("colored_packed");
-            ball.LoadContent(GraphicsDevice, Content, "ball");
+
+            playerBall.LoadContent(GraphicsDevice, Content, "ball");
+            foreach (var ball in balls) ball.LoadContent(GraphicsDevice, Content, "ball");
+            balls.Add(playerBall);
+
             bangers = Content.Load<SpriteFont>("bangers");
             bangersSmall = Content.Load<SpriteFont>("bangers1");
         }
@@ -82,9 +97,54 @@ namespace SpriteExample
         {
             foreach (var hole in holes)
             {
-                if (ball.Bounds.CollidesWith(hole.Bounds) && !hole.dummy) Exit();
+                if (playerBall.Bounds.CollidesWith(hole.Bounds) && !hole.dummy) Exit();
             }
-            ball.Update(gameTime, GraphicsDevice);
+
+            foreach (var ball in balls) ball.Update(gameTime, GraphicsDevice);
+
+            for (int i = 0; i < balls.Count; i++)
+            {
+                foreach (var hole in holes) if (
+                        balls[i].Bounds.CollidesWith(hole.Bounds)
+                        && hole.dummy
+                        && balls[i] != playerBall) balls.Remove(balls[i]);
+                for (int j = i + 1; j < balls.Count; j++)
+                {
+                    //var res = [this.vx - otherParticule.vx, this.vy - otherParticule.vy];
+                    var res = new float[] { balls[i].Velocity.X - balls[j].Velocity.X, balls[i].Velocity.Y - balls[j].Velocity.Y };
+                    //res[0] *(otherParticule.x - this.x) + res[1] * (otherParticule.y - this.y) >= 0
+                    if (balls[i].CollidesWith(balls[j]) && (res[0] * (balls[j].Center.X - balls[i].Center.X) + res[1] * (balls[j].Center.Y - balls[i].Center.Y) >= 0))
+                    {
+                        // TODO: Handle collisions
+                        Vector2 collisionAxis = balls[i].Center - balls[j].Center;
+                        collisionAxis.Normalize();
+
+                        float angle = -(float)System.Math.Atan2(balls[i].Center.Y - balls[j].Center.Y, balls[i].Center.X - balls[j].Center.X);
+
+                        Vector2 u0 = Vector2.Transform(balls[i].Velocity, Matrix.CreateRotationZ(angle));
+                        Vector2 u1 = Vector2.Transform(balls[j].Velocity, Matrix.CreateRotationZ(angle));
+
+                        Vector2 v0 = new Vector2(
+                            (2 * balls[j].Radius) / (balls[i].Radius + balls[j].Radius) * u1.X,
+                            u0.Y
+                            );
+                        Vector2 v1 = new Vector2(
+                            (2 * balls[i].Radius) / (balls[i].Radius + balls[j].Radius) * u0.X,
+                            u1.Y
+                            );
+
+                        balls[i].Velocity = Vector2.Transform(v0, Matrix.CreateRotationZ(-angle));
+                        balls[j].Velocity = Vector2.Transform(v1, Matrix.CreateRotationZ(-angle));
+
+                        balls[i].IsColliding = balls[j].IsColliding = true;
+                    }
+                    else if (!balls[i].CollidesWith(balls[j]))
+                    {
+                        balls[i].IsColliding = balls[j].IsColliding = false;
+                    }
+                }
+            }
+
             base.Update(gameTime);
         }
 
@@ -101,7 +161,7 @@ namespace SpriteExample
             // TODO: Add your drawing code here
             spriteBatch.Begin();
             foreach (var hole in holes) hole.Draw(spriteBatch);
-            ball.Draw(spriteBatch);
+            foreach (var ball in balls) ball.Draw(spriteBatch);
             spriteBatch.DrawString(
                 bangers, "WRONG H  LEs",
                 new Vector2(

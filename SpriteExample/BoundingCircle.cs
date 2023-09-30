@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 
-namespace SpriteExample.Content
+namespace WrongHole
 {
     public struct BoundingCircle
     {

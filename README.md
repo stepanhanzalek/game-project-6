@@ -11,3 +11,11 @@ Assets used in this module include:
 * Content/32x32-bat-sprite.png - created by bagzie on OpenGameArg.org (https://opengameart.org/content/bat-sprite) and relased under OGA-BY 3.0 
 
 This repository and associated video were created for the CIS 580 - Foundations of Game Programming course offered by the Department of Computer Science at Kansas State University.
+
+
+todo
+All assets from the MonoGame port of the XNA Game State Management Sample, available at:
+
+https://github.com/tomizechsterson/game-state-management-monogame
+
+and relased under the MIT License

@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-namespace SpriteExample
+namespace WrongHole
 {
     /// <summary>
     /// A class representing a slime ghost

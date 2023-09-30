@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 
-namespace SpriteExample.Content
+namespace WrongHole.Content
 {
     public class BatchHandler
     {

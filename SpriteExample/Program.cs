@@ -1,3 +1,2 @@
-﻿
-using var game = new SpriteExample.SpriteExampleGame();
+﻿using var game = new WrongHole.SpriteExampleGame();
 game.Run();

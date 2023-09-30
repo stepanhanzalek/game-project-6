@@ -1,8 +1,8 @@
 
 #----------------------------- Global Properties ----------------------------#
 
-/outputDir:bin/$(Platform)
-/intermediateDir:obj/$(Platform)
+/outputDir:bin
+/intermediateDir:obj
 /platform:Windows
 /config:
 /profile:Reach
@@ -12,18 +12,6 @@
 
 
 #---------------------------------- Content ---------------------------------#
-
-#begin 32x32-bat-sprite.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:32x32-bat-sprite.png
 
 #begin ball.png
 /importer:TextureImporter
@@ -51,17 +39,23 @@
 /processorParam:TextureFormat=Compressed
 /build:Bangers1.spritefont
 
-#begin colored_packed.png
+#begin bg_music.wav
+/importer:WavImporter
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:bg_music.wav
+
+#begin blank.png
 /importer:TextureImporter
 /processor:TextureProcessor
-/processorParam:ColorKeyColor=71,45,60,255
+/processorParam:ColorKeyColor=255,0,255,255
 /processorParam:ColorKeyEnabled=True
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:colored_packed.png
+/build:blank.png
 
 #begin cue.png
 /importer:TextureImporter
@@ -74,6 +68,12 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:cue.png
+
+#begin hitHurt.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:hitHurt.wav
 
 #begin hole1.png
 /importer:TextureImporter
@@ -99,15 +99,9 @@
 /processorParam:TextureFormat=Color
 /build:hole2.png
 
-#begin slime.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:slime.png
+#begin pickupCoin.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:pickupCoin.wav
 

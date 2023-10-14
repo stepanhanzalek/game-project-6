@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Media;
 using WrongHole.Screens;
@@ -17,16 +18,22 @@ namespace WrongHole
         private SpriteBatch spriteBatch;
         private Song bgMusic;
 
-        private int levelsRemaining = 3;
+        private int score = 0;
+
+        private Random random;
 
         /// <summary>
         /// Constructs the game
         /// </summary>
         public SpriteExampleGame()
         {
+            random = new Random();
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
+            graphics.PreferredBackBufferWidth = Constants.GAME_WIDTH;
+            graphics.PreferredBackBufferHeight = Constants.GAME_HEIGHT;
+            graphics.ApplyChanges();
 
             var screenFactory = new ScreenFactory();
             Services.AddService(typeof(IScreenFactory), screenFactory);
@@ -62,12 +69,7 @@ namespace WrongHole
         /// <param name="gameTime">the measured game time</param>
         protected override void Update(GameTime gameTime)
         {
-            if (screenManager.GetScreens().Length == 0)
-            {
-                screenManager.AddScreen(new RandomLevelScreen(this), null);
-                --levelsRemaining;
-            }
-            if (levelsRemaining == 0) Exit();
+            if (screenManager.GetScreens().Length == 0) screenManager.AddScreen(new RandomLevelScreen(this, random.Next()), null);
             base.Update(gameTime);
         }
 
@@ -82,7 +84,6 @@ namespace WrongHole
 
         private void AddInitialScreens()
         {
-            screenManager.AddScreen(new BackgroundScreen(this), null);
         }
     }
 }

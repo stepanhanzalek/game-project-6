@@ -2,72 +2,61 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using WrongHole.Content;
+using ParticleSystemExample;
+using WrongHole.Objects;
+using WrongHole.Screens.GameScreens;
 using WrongHole.StateManagement;
+using Vector2 = tainicom.Aether.Physics2D.Common.Vector2;
 
 namespace WrongHole.Screens
 {
     // The background screen sits behind all the other menu screens.
     // It draws a background image that remains fixed in place regardless
     // of whatever transitions the screens on top of it may be doing.
-    public class RandomLevelScreen : GameScreen
+    public class RandomLevelScreen : WorldWithBordersScreen
     {
-        public bool Active = true;
-        private ContentManager _content;
+        //private PlayerBall playerBall;
 
-        private PlayerBall playerBall;
+        private List<Hole> holes;
 
-        private Hole[] holes;
-
-        private List<Ball> balls;
-
-        private GraphicsDevice GraphicsDevice;
+        private Dictionary<int, Ball> balls;
 
         private SoundEffect hit;
 
         private SoundEffect win;
 
+        private SpriteFont bangers;
+
         private bool isLast;
 
-        public RandomLevelScreen(Game game, bool isLast = false)
+        private int PlayerBallHash;
+        private Hole GoodHole;
+
+        private FireworkParticleSystem _fireworks;
+
+        private float _shakingCountdown;
+        private Random random = new Random();
+
+        private bool exit = false;
+
+        private Color[] _colorPallete;
+
+        public RandomLevelScreen(Game game, int seed, bool isLast = false)
         {
             this.isLast = isLast;
             TransitionOnTime = TimeSpan.FromSeconds(0.5);
             TransitionOffTime = TimeSpan.FromSeconds(0.5);
 
-            Random rand = new Random();
+            Random rand = new Random(seed);
 
             Vector2[] positions = new Vector2[5];
 
-            int i = 0;
-
-            while (i < 5)
-            {
-                positions[i] = new Vector2((float)rand.NextDouble() * 800 * .75f,
-                (float)rand.NextDouble() * 480 * .75f);
-                for (int j = 0; j < i; j++) if (CollisionHelper.Collides(32, positions[i], positions[j])) continue;
-                i++;
-            }
-
-            playerBall = new PlayerBall();
-            balls = new List<Ball> {
-                new Ball(positions[0]),
-                new Ball(positions[1]),
-                new Ball(positions[2]),
-                new Ball(positions[3]),
-                new Ball(positions[4]),
-            };
-
-            holes = new Hole[] {
-                new Hole(),
-                new Hole(),
-                new Hole(),
-                new Hole(),
-                new Hole(),
-            };
             this.isLast = isLast;
+
+            _fireworks = new FireworkParticleSystem(game, 20);
+
+            _colorPallete = Constants.MONOCHROMES[random.Next(Constants.MONOCHROMES.Length)];
         }
 
         /// <summary>
@@ -79,20 +68,31 @@ namespace WrongHole.Screens
         /// </summary>
         public override void Activate()
         {
-            if (_content == null)
-                _content = new ContentManager(ScreenManager.Game.Services, "Content");
-            GraphicsDevice = ScreenManager.GraphicsDevice;
-
-            foreach (var hole in holes) hole.LoadContent(GraphicsDevice, _content, "hole1");
-            holes[0].LoadContent(GraphicsDevice, _content, "hole2");
-            holes[0].dummy = false;
-
-            playerBall.LoadContent(GraphicsDevice, _content, "ball");
-            foreach (var ball in balls) ball.LoadContent(GraphicsDevice, _content, "ball");
-            balls.Add(playerBall);
+            base.Activate();
 
             hit = _content.Load<SoundEffect>("hitHurt");
             win = _content.Load<SoundEffect>("pickupCoin");
+            bangers = _content.Load<SpriteFont>("bangers1");
+
+            balls = new Dictionary<int, Ball>();
+
+            holes = new List<Hole>();
+            for (int i = 0; i < random.Next(0, 5); ++i) holes.Add(ObjectFactory.GetHole(_world, random, new Point(Constants.BALL_RADIUS, Constants.BALL_RADIUS / 2), _colorPallete[0], true));
+            foreach (var hole in holes) hole.LoadContent(_content);
+            GoodHole = ObjectFactory.GetHole(_world, random, new Point(Constants.BALL_RADIUS, Constants.BALL_RADIUS / 2), _colorPallete[0], true);
+            GoodHole.LoadContent(_content);
+
+            var playerBall = ObjectFactory.GetPlayerBall(_world, random, Constants.BALL_RADIUS, _colorPallete[4], randomPos: true);
+            balls.Add(playerBall.Item1, playerBall.Item2);
+            PlayerBallHash = playerBall.Item1;
+
+            for (int j = 0; j < random.Next(0, 5); j++)
+            {
+                var ball = ObjectFactory.GetBall(_world, random, Constants.BALL_RADIUS, _colorPallete[3], randomPos: true);
+                balls.Add(ball.Item1, ball.Item2);
+            }
+
+            foreach (var (_, ball) in balls) ball.LoadContent(_content);
         }
 
         public override void Unload()
@@ -106,57 +106,41 @@ namespace WrongHole.Screens
         // parameter to false in order to stop the base Update method wanting to transition off.
         public override void Update(GameTime gameTime, bool otherScreenHasFocus, bool coveredByOtherScreen)
         {
-            if (!Active) return;
-
+            foreach (var (_, ball) in balls)
+            {
+                ball.Update(gameTime);
+            }
             foreach (var hole in holes)
             {
-                if (playerBall.Bounds.CollidesWith(hole.Bounds) && !hole.dummy) { if (isLast) ScreenManager.Game.Exit(); else ExitScreen(); }
-            }
-
-            foreach (var ball in balls) ball.Update(gameTime, GraphicsDevice);
-
-            for (int i = 0; i < balls.Count; i++)
-            {
-                foreach (var hole in holes) if (
-                        balls[i].Bounds.CollidesWith(hole.Bounds)
-                        && hole.dummy
-                        && balls[i] != playerBall) { win.Play(); balls.Remove(balls[i]); }
-                for (int j = i + 1; j < balls.Count; j++)
+                if (hole.Colliding && hole.CollisionHash != PlayerBallHash && balls.ContainsKey(hole.CollisionHash))
                 {
-                    var res = new float[] { balls[i].Velocity.X - balls[j].Velocity.X, balls[i].Velocity.Y - balls[j].Velocity.Y };
-                    if (balls[i].CollidesWith(balls[j]) && res[0] * (balls[j].Center.X - balls[i].Center.X) + res[1] * (balls[j].Center.Y - balls[i].Center.Y) >= 0)
-                    {
-                        // TODO: Handle collisions
-                        Vector2 collisionAxis = balls[i].Center - balls[j].Center;
-                        collisionAxis.Normalize();
-
-                        float angle = -(float)System.Math.Atan2(balls[i].Center.Y - balls[j].Center.Y, balls[i].Center.X - balls[j].Center.X);
-
-                        Vector2 u0 = Vector2.Transform(balls[i].Velocity, Matrix.CreateRotationZ(angle));
-                        Vector2 u1 = Vector2.Transform(balls[j].Velocity, Matrix.CreateRotationZ(angle));
-
-                        Vector2 v0 = new Vector2(
-                            2 * balls[j].Radius / (balls[i].Radius + balls[j].Radius) * u1.X,
-                            u0.Y
-                            );
-                        Vector2 v1 = new Vector2(
-                            2 * balls[i].Radius / (balls[i].Radius + balls[j].Radius) * u0.X,
-                            u1.Y
-                            );
-
-                        balls[i].Velocity = Vector2.Transform(v0, Matrix.CreateRotationZ(-angle));
-                        balls[j].Velocity = Vector2.Transform(v1, Matrix.CreateRotationZ(-angle));
-
-                        balls[i].IsColliding = balls[j].IsColliding = true;
-
-                        hit.Play();
-                    }
-                    else if (!balls[i].CollidesWith(balls[j]))
-                    {
-                        balls[i].IsColliding = balls[j].IsColliding = false;
-                    }
+                    var toDelete = balls[hole.CollisionHash];
+                    _fireworks.PlaceFirework(new Microsoft.Xna.Framework.Vector2(toDelete._body.Position.X, toDelete._body.Position.Y), Color.Red);
+                    _world.Remove(toDelete._body);
+                    balls.Remove(hole.CollisionHash);
+                }
+                hole.Update(gameTime);
+            }
+            if (GoodHole.Colliding && balls.ContainsKey(GoodHole.CollisionHash))
+            {
+                var toDelete = balls[GoodHole.CollisionHash];
+                _fireworks.PlaceFirework(new Microsoft.Xna.Framework.Vector2(toDelete._body.Position.X, toDelete._body.Position.Y), Color.Green);
+                _world.Remove(toDelete._body);
+                balls.Remove(GoodHole.CollisionHash);
+                _shakingCountdown = 1f;
+                win.Play();
+                if (GoodHole.CollisionHash == PlayerBallHash)
+                {
+                    _shakingCountdown = 2f;
+                    exit = true;
                 }
             }
+
+            _fireworks.Update(gameTime);
+
+            if (_shakingCountdown > 0f) _shakingCountdown -= (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+            if (exit && _shakingCountdown <= 0f) ExitScreen();
 
             base.Update(gameTime, otherScreenHasFocus, false);
         }
@@ -165,13 +149,32 @@ namespace WrongHole.Screens
         {
             var spriteBatch = ScreenManager.SpriteBatch;
 
-            GraphicsDevice.Clear(Color.LawnGreen);
+            var textSize = bangers.MeasureString("just try to get your ball to the right hole");
+            var textSize2 = bangers.MeasureString("the other balls might help you");
+
+            _graphics.Clear(_colorPallete[2]);
 
             // TODO: Add your drawing code here
-            spriteBatch.Begin();
+            if (_shakingCountdown > 0f) spriteBatch.Begin(transformMatrix: Matrix.CreateTranslation(random.Next(-1, 1), random.Next(-1, 1), 0));
+            else spriteBatch.Begin();
+            DrawBoard(ref spriteBatch, _colorPallete[3], _colorPallete[1]);
             foreach (var hole in holes) hole.Draw(spriteBatch);
-            foreach (var ball in balls) ball.Draw(spriteBatch);
+            GoodHole.Draw(spriteBatch);
+            foreach (var (_, ball) in balls) ball.Draw(spriteBatch);
+            spriteBatch.DrawString(
+                bangers, "just try to get your ball to the right hole",
+                new Microsoft.Xna.Framework.Vector2(
+                    (Constants.GAME_WIDTH - textSize.X) / 2,
+                    3 * textSize.Y),
+                _colorPallete[4]);
+            spriteBatch.DrawString(
+                bangers, "the other balls might help you",
+                new Microsoft.Xna.Framework.Vector2(
+                    (Constants.GAME_WIDTH - textSize2.X) / 2,
+                    Constants.GAME_HEIGHT - 4 * textSize2.Y),
+                _colorPallete[4]);
             spriteBatch.End();
+            _fireworks.Draw(gameTime);
         }
     }
 }

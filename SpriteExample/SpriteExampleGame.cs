@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Media;
@@ -12,14 +13,12 @@ namespace WrongHole
     /// </summary>
     public class SpriteExampleGame : Game
     {
+        public static int score = 0;
         private readonly ScreenManager screenManager;
         private GraphicsDeviceManager graphics;
 
         private SpriteBatch spriteBatch;
         private Song bgMusic;
-
-        private int score = 0;
-
         private Random random;
 
         /// <summary>
@@ -58,9 +57,12 @@ namespace WrongHole
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
+            var _tilemap = Content.Load<TileMap>("tilemap");
             bgMusic = Content.Load<Song>("bg_music");
             MediaPlayer.IsRepeating = true;
-            MediaPlayer.Play(bgMusic);
+            //TODO: MediaPlayer.Play(bgMusic);
+
+            score = int.Parse(File.ReadAllText(Constants.SCORE_PATH).Trim());
         }
 
         /// <summary>
@@ -69,7 +71,7 @@ namespace WrongHole
         /// <param name="gameTime">the measured game time</param>
         protected override void Update(GameTime gameTime)
         {
-            if (screenManager.GetScreens().Length == 0) screenManager.AddScreen(new RandomLevelScreen(this, random.Next()), null);
+            if (screenManager.GetScreens().Length == 0) screenManager.AddScreen(new TileMapLevelScreen(this, random.Next()), null);
             base.Update(gameTime);
         }
 
@@ -80,6 +82,13 @@ namespace WrongHole
         protected override void Draw(GameTime gameTime)
         {
             base.Draw(gameTime);
+        }
+
+        protected override void UnloadContent()
+        {
+            File.WriteAllText(Constants.SCORE_PATH, score.ToString());
+
+            base.UnloadContent();
         }
 
         private void AddInitialScreens()

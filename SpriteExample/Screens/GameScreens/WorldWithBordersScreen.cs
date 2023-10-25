@@ -33,18 +33,6 @@ namespace WrongHole.Screens.GameScreens
 
             _world = new World();
             _world.Gravity = Vector2.Zero;
-            var edges = new Body[] {
-                _world.CreateEdge(new Vector2(Constants.GAME_WIDTH_LOW, Constants.GAME_HEIGHT_LOW), new Vector2(Constants.GAME_WIDTH_HIGH, Constants.GAME_HEIGHT_LOW)),
-                _world.CreateEdge(new Vector2(Constants.GAME_WIDTH_LOW, Constants.GAME_HEIGHT_LOW), new Vector2(Constants.GAME_WIDTH_LOW, Constants.GAME_HEIGHT_HIGH)),
-                _world.CreateEdge(new Vector2(Constants.GAME_WIDTH_LOW, Constants.GAME_HEIGHT_HIGH), new Vector2(Constants.GAME_WIDTH_HIGH, Constants.GAME_HEIGHT_HIGH)),
-                _world.CreateEdge(new Vector2(Constants.GAME_WIDTH_HIGH, Constants.GAME_HEIGHT_LOW), new Vector2(Constants.GAME_WIDTH_HIGH, Constants.GAME_HEIGHT_HIGH)),
-            };
-
-            foreach (var edge in edges)
-            {
-                edge.BodyType = BodyType.Static;
-                edge.SetRestitution(1);
-            }
         }
 
         public override void Unload()
@@ -62,7 +50,7 @@ namespace WrongHole.Screens.GameScreens
             base.Update(gameTime, otherScreenHasFocus, false);
         }
 
-        protected void DrawBoard(ref SpriteBatch spriteBatch, Color lighter, Color darker)
+        protected virtual void DrawBoard(ref SpriteBatch spriteBatch, Color lighter, Color darker)
         {
             spriteBatch.Draw(_blankTexture,
                 new Rectangle(

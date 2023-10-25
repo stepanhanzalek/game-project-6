@@ -7,17 +7,17 @@ namespace WrongHole
         /// <summary>
         /// The width of the game world.
         /// </summary>
-        public static int GAME_WIDTH = 760;
+        public static int GAME_WIDTH = 704;
 
         /// <summary>
         /// The height of the game world.
         /// </summary>
-        public static int GAME_HEIGHT = 480;
+        public static int GAME_HEIGHT = 512;
 
         /// <summary>
         /// The radius of the balls.
         /// </summary>
-        public static int BALL_RADIUS = 15;
+        public static int BALL_RADIUS = 32;
 
         /// <summary>
         /// The ball defualt dampening.
@@ -56,5 +56,7 @@ namespace WrongHole
                 new Color(91,169,93),
             },
         };
+
+        public static string SCORE_PATH = "score.txt";
     }
 }

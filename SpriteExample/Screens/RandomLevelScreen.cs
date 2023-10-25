@@ -83,13 +83,13 @@ namespace WrongHole.Screens
             GoodHole.LoadContent(_content);
 
             var playerBall = ObjectFactory.GetPlayerBall(_world, random, Constants.BALL_RADIUS, _colorPallete[4], randomPos: true);
-            balls.Add(playerBall.Item1, playerBall.Item2);
+            //TODO: FIX - balls.Add(playerBall.Item1, playerBall.Item2);
             PlayerBallHash = playerBall.Item1;
 
             for (int j = 0; j < random.Next(0, 5); j++)
             {
-                var ball = ObjectFactory.GetBall(_world, random, Constants.BALL_RADIUS, _colorPallete[3], randomPos: true);
-                balls.Add(ball.Item1, ball.Item2);
+                //var ball = ObjectFactory.GetBall(_world, random, Constants.BALL_RADIUS, _colorPallete[3], randomPos: true);
+                //balls.Add(ball.Item1, ball.Item2);
             }
 
             foreach (var (_, ball) in balls) ball.LoadContent(_content);
@@ -160,7 +160,10 @@ namespace WrongHole.Screens
             DrawBoard(ref spriteBatch, _colorPallete[3], _colorPallete[1]);
             foreach (var hole in holes) hole.Draw(spriteBatch);
             GoodHole.Draw(spriteBatch);
-            foreach (var (_, ball) in balls) ball.Draw(spriteBatch);
+            foreach (var (hash, ball) in balls)
+            {
+                //    hash == _activeBallHash ? ball.Draw(spriteBatch);
+            }
             spriteBatch.DrawString(
                 bangers, "just try to get your ball to the right hole",
                 new Microsoft.Xna.Framework.Vector2(

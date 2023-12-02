@@ -1,6 +1,6 @@
 # Wrong Hole
 
-This is a game project created for the class CIS580 - Game Programming on KSU.
+This is a game project created for the CIS580 - Game Programming class on KSU.
 
 Wrong hole is a small game where you try to put all the balls into the right holes.
 

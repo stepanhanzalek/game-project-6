@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Media;
 using WrongHole.Screens;
 using WrongHole.StateManagement;
@@ -11,22 +11,18 @@ namespace WrongHole
     /// <summary>
     /// A game demonstrating the use of sprites
     /// </summary>
-    public class SpriteExampleGame : Game
+    public class WrongHoleGame : Game
     {
-        public static int score = 0;
+        public static bool[] score;
         private readonly ScreenManager screenManager;
         private GraphicsDeviceManager graphics;
-
-        private SpriteBatch spriteBatch;
         private Song bgMusic;
-        private Random random;
 
         /// <summary>
         /// Constructs the game
         /// </summary>
-        public SpriteExampleGame()
+        public WrongHoleGame()
         {
-            random = new Random();
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
@@ -56,13 +52,11 @@ namespace WrongHole
         /// </summary>
         protected override void LoadContent()
         {
-            spriteBatch = new SpriteBatch(GraphicsDevice);
-            var _tilemap = Content.Load<TileMap>("tilemap");
             bgMusic = Content.Load<Song>("bg_music");
             MediaPlayer.IsRepeating = true;
-            //TODO: MediaPlayer.Play(bgMusic);
+        TODO: MediaPlayer.Play(bgMusic);
 
-            score = int.Parse(File.ReadAllText(Constants.SCORE_PATH).Trim());
+            score = File.ReadAllText(Constants.SCORE_PATH).Trim().Split(',').Select(x => bool.Parse(x)).ToArray();
         }
 
         /// <summary>
@@ -71,8 +65,9 @@ namespace WrongHole
         /// <param name="gameTime">the measured game time</param>
         protected override void Update(GameTime gameTime)
         {
-            if (screenManager.GetScreens().Length == 0) screenManager.AddScreen(new TileMapLevelScreen(this, random.Next()), null);
             base.Update(gameTime);
+
+            if (screenManager.GetScreens().Length == 0) Exit();
         }
 
         /// <summary>
@@ -86,13 +81,15 @@ namespace WrongHole
 
         protected override void UnloadContent()
         {
-            File.WriteAllText(Constants.SCORE_PATH, score.ToString());
+            File.WriteAllText(Constants.SCORE_PATH, String.Join(',', score.Select(x => x.ToString())));
 
             base.UnloadContent();
         }
 
         private void AddInitialScreens()
         {
+            screenManager.AddScreen(new IntroScreen(), null);
+            screenManager.AddScreen(new SplashScreen(), null);
         }
     }
 }

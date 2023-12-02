@@ -14,6 +14,14 @@ namespace WrongHole
         /// </summary>
         public static int GAME_HEIGHT = 512;
 
+        public static Vector2 GAME_CENTER = new Vector2(352, 256);
+
+        public static Vector2 GAME_FULL = new Vector2(704, 512);
+
+        public static Vector2 GAME_CENTER_LEFT = new Vector2(176, 256);
+
+        public static Vector2 GAME_CENTER_RIGHT = new Vector2(528, 256);
+
         /// <summary>
         /// The radius of the balls.
         /// </summary>
@@ -58,5 +66,34 @@ namespace WrongHole
         };
 
         public static string SCORE_PATH = "score.txt";
+
+        public static string CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+?";
+
+        public static double[] TITLE_CURVE = new double[]
+        {
+            200,
+            150,
+            120,
+            110,
+            80,
+            70,
+            50,
+            30,
+            30,
+            30,
+            10,
+            10,
+            30,
+            30,
+            30,
+            50,
+            70,
+            80,
+            110,
+            120,
+            150,
+            200,
+            5000
+        };
     }
 }

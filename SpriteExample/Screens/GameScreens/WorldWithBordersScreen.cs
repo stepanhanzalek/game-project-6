@@ -15,6 +15,10 @@ namespace WrongHole.Screens.GameScreens
         protected GraphicsDevice _graphics;
         protected Texture2D _blankTexture;
 
+        public WorldWithBordersScreen() : base()
+        {
+        }
+
         /// <summary>
         /// Loads graphics content for this screen. The background texture is quite
         /// big, so we use our own local ContentManager to load it. This allows us

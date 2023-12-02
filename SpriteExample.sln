@@ -5,6 +5,8 @@ VisualStudioVersion = 17.2.32505.173
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WrongHole", "SpriteExample\WrongHole.csproj", "{FBD6D496-EF5C-42E3-9C56-E69B3A87E8F3}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WrongHolePipeline", "WrongHolePipeline\WrongHolePipeline.csproj", "{30722B97-0F1E-4450-BF94-1FCA4606BBFA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{FBD6D496-EF5C-42E3-9C56-E69B3A87E8F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FBD6D496-EF5C-42E3-9C56-E69B3A87E8F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FBD6D496-EF5C-42E3-9C56-E69B3A87E8F3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{30722B97-0F1E-4450-BF94-1FCA4606BBFA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{30722B97-0F1E-4450-BF94-1FCA4606BBFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{30722B97-0F1E-4450-BF94-1FCA4606BBFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{30722B97-0F1E-4450-BF94-1FCA4606BBFA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

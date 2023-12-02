@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace ParticleSystemExample
 {
@@ -20,7 +19,6 @@ namespace ParticleSystemExample
             minNumParticles = 20;
             maxNumParticles = 20;
 
-            blendState = BlendState.Additive;
             DrawOrder = AdditiveBlendDrawOrder;
         }
 

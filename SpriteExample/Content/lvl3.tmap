@@ -1,0 +1,23 @@
+﻿tileset.png
+---world dimensions---
+64,64
+10,3
+---tilemap---
+4,7,7,7,7,7,7,7,7,3
+6,0,0,0,0,0,0,0,0,5
+2,8,8,8,8,8,8,8,8,1
+---borders---
+1,1|9,1
+9,1|9,2
+1,1|1,2
+1,2|9,2
+---scale---
+1
+---objects---
+2,5|1,5|CIRCLE|0
+4,5|1,5|SQUARE|0
+8|1,5|HOLE_CIRCLE|1
+6|1,5|HOLE_SQUARE|1
+---text---
+5|0|You can change the...
+5|3|...active ball with *space*

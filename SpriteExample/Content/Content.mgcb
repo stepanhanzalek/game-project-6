@@ -26,20 +26,6 @@
 /processorParam:TextureFormat=Color
 /build:ball.png
 
-#begin Bangers.spritefont
-/importer:FontDescriptionImporter
-/processor:FontDescriptionProcessor
-/processorParam:PremultiplyAlpha=True
-/processorParam:TextureFormat=Compressed
-/build:Bangers.spritefont
-
-#begin Bangers1.spritefont
-/importer:FontDescriptionImporter
-/processor:FontDescriptionProcessor
-/processorParam:PremultiplyAlpha=True
-/processorParam:TextureFormat=Compressed
-/build:Bangers1.spritefont
-
 #begin bg_music.wav
 /importer:WavImporter
 /processor:SongProcessor
@@ -57,6 +43,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:blank.png
+
+#begin button.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:button.png
 
 #begin circle.png
 /importer:TextureImporter
@@ -81,6 +79,26 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:cue.png
+
+#begin explosion.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:explosion.wav
+
+#begin GNUTypewriter.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:GNUTypewriter.spritefont
+
+#begin GNUTypewriterTitle.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:GNUTypewriterTitle.spritefont
 
 #begin hitHurt.wav
 /importer:WavImporter
@@ -112,6 +130,42 @@
 /processorParam:TextureFormat=Color
 /build:hole2.png
 
+#begin intro.tmap
+/importer:TileMapImporter
+/processor:TileMapProcessor
+/processorParam:Scale=1
+/build:intro.tmap
+
+#begin lvl0.tmap
+/importer:TileMapImporter
+/processor:TileMapProcessor
+/processorParam:Scale=1
+/build:lvl0.tmap
+
+#begin lvl1.tmap
+/importer:TileMapImporter
+/processor:TileMapProcessor
+/processorParam:Scale=1
+/build:lvl1.tmap
+
+#begin lvl2.tmap
+/importer:TileMapImporter
+/processor:TileMapProcessor
+/processorParam:Scale=1
+/build:lvl2.tmap
+
+#begin lvl3.tmap
+/importer:TileMapImporter
+/processor:TileMapProcessor
+/processorParam:Scale=1
+/build:lvl3.tmap
+
+#begin lvl4.tmap
+/importer:TileMapImporter
+/processor:TileMapProcessor
+/processorParam:Scale=1
+/build:lvl4.tmap
+
 #begin pickupCoin.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
@@ -129,12 +183,6 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:square.png
-
-#begin tilemap.tmap
-/importer:TileMapImporter
-/processor:TileMapProcessor
-/processorParam:Scale=1
-/build:tilemap.tmap
 
 #begin tileset.png
 /importer:TextureImporter

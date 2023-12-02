@@ -11,6 +11,8 @@ namespace WrongHole.Objects
         public bool dummy = true;
         public int CollisionHash;
         public Category Shape;
+        public int Lifespan;
+        public Body _body;
         protected string _textureName;
 
         protected Texture2D _texture;
@@ -21,9 +23,7 @@ namespace WrongHole.Objects
 
         private Color _color;
 
-        private Body _body;
-
-        public Hole(Vector2 position, string textureName, Color color, Point size, Body body, Category shape)
+        public Hole(Vector2 position, string textureName, Color color, Point size, Body body, Category shape, int lifespan)
         {
             _position = position;
             _textureName = textureName;
@@ -32,6 +32,7 @@ namespace WrongHole.Objects
             _body = body;
             _body.OnCollision += CollisionHandler;
             Shape = shape;
+            Lifespan = lifespan;
         }
 
         /// <summary>

@@ -1,19 +1,13 @@
-# Sprite Example
-This is a starter project for learning about MonoGame sprites.  
+# Wrong Hole
 
-The accompanying video tutorial can be found at [https://youtu.be/qbAUp8KZvww](https://youtu.be/qbAUp8KZvww)
+This is a game project created for the class CIS580 - Game Programming on KSU.
 
-Assets used in this module include:
+Wrong hole is a small game where you try to put all the balls into the right holes.
 
-* Content/slime.png - created by Nathan Bean for this tutorial, released under public domain
-* Content/Bangers/Bangers-Regular.ttf - Bangers font created by Vernon Adams, released on Google Fonts (https://fonts.google.com/specimen/Bangers) under the Open Font License
-* Content/colored-packed.png - created by Kinney as part of his 1-Bit Pack on OpenGameArt.Org (https://opengameart.org/content/1-bit-pack), released under public domain
-* Content/32x32-bat-sprite.png - created by bagzie on OpenGameArg.org (https://opengameart.org/content/bat-sprite) and relased under OGA-BY 3.0 
+## Assets used in this module include:
 
-This repository and associated video were created for the CIS 580 - Foundations of Game Programming course offered by the Department of Computer Science at Kansas State University.
+* Content/GNUTypewriter/* - GNUTypewriter font created by Lukasz Komsta under the OFL license, available at https://fontlibrary.org/en/font/gnutypewriter
 
-
-todo
 All assets from the MonoGame port of the XNA Game State Management Sample, available at:
 
 https://github.com/tomizechsterson/game-state-management-monogame

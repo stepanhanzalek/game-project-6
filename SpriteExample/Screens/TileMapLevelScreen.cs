@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using ParticleSystemExample;
-using tainicom.Aether.Physics2D.Dynamics;
 using WrongHole.Objects;
 using WrongHole.Screens.GameScreens;
 using WrongHole.StateManagement;
-using Vector2 = tainicom.Aether.Physics2D.Common.Vector2;
 
 namespace WrongHole.Screens
 {
@@ -18,52 +16,52 @@ namespace WrongHole.Screens
     // of whatever transitions the screens on top of it may be doing.
     public class TileMapLevelScreen : WorldWithBordersScreen
     {
-        //private PlayerBall playerBall;
-
+        public int CurrLevel;
         private List<Hole> holes;
 
-        private Dictionary<int, Ball> balls;
+        private SortedDictionary<int, Ball> balls;
+
+        private IEnumerator<KeyValuePair<int, Ball>> currBall;
 
         private SoundEffect hit;
 
         private SoundEffect win;
 
-        private SpriteFont bangers;
+        private SoundEffect explosion;
 
-        private bool isLast;
+        private SpriteFont Font;
 
         private PlayerBall PlayerBall;
-
-        private Hole GoodHole;
 
         private FireworkParticleSystem _fireworks;
 
         private float _shakingCountdown;
-        private Random random = new Random();
-
-        private bool exit = false;
 
         private Color[] _colorPallete;
 
         private TileMap _tilemap;
 
-        private int _activeBallHash;
+        private Random random = new Random();
 
-        public TileMapLevelScreen(Game game, int seed, bool isLast = false)
+        private string _tilemapName;
+
+        private KeyboardState lastState, currState;
+
+        private GameState state = GameState.Playing;
+
+        public TileMapLevelScreen(int currLvl) : base()
         {
-            this.isLast = isLast;
             TransitionOnTime = TimeSpan.FromSeconds(0.5);
             TransitionOffTime = TimeSpan.FromSeconds(0.5);
+            _tilemapName = $"lvl{currLvl}";
+            CurrLevel = currLvl;
+        }
 
-            Random rand = new Random(seed);
-
-            Vector2[] positions = new Vector2[5];
-
-            this.isLast = isLast;
-
-            _fireworks = new FireworkParticleSystem(game, 20);
-
-            _colorPallete = Constants.MONOCHROMES[random.Next(Constants.MONOCHROMES.Length)];
+        private enum GameState
+        {
+            Playing,
+            Success,
+            Fail,
         }
 
         /// <summary>
@@ -77,44 +75,56 @@ namespace WrongHole.Screens
         {
             base.Activate();
 
+            _colorPallete = Constants.MONOCHROMES[random.Next(Constants.MONOCHROMES.Length)];
+
             hit = _content.Load<SoundEffect>("hitHurt");
             win = _content.Load<SoundEffect>("pickupCoin");
-            bangers = _content.Load<SpriteFont>("bangers1");
-            _tilemap = _content.Load<TileMap>("tilemap");
+            Font = _content.Load<SpriteFont>("GNUTypewriter");
+            explosion = _content.Load<SoundEffect>("explosion");
+            _tilemap = _content.Load<TileMap>(this._tilemapName);
 
-            foreach (var border in _tilemap.Borders)
-            {
-                var edge = _world.CreateEdge(new Vector2(border.X, border.Y), new Vector2(border.Z, border.W));
-                edge.BodyType = BodyType.Static;
-                edge.SetRestitution(1);
-            }
+            _tilemap.AddBorders(_world);
 
-            balls = new Dictionary<int, Ball>();
-
+            balls = new SortedDictionary<int, Ball>();
             holes = new List<Hole>();
-            for (int i = 0; i < random.Next(1, 3); ++i) holes.Add(ObjectFactory.GetCircleHole(_world, random, new Point(Constants.BALL_RADIUS, Constants.BALL_RADIUS), Color.Black, true));
-            for (int i = 0; i < random.Next(1, 3); ++i) holes.Add(ObjectFactory.GetSquareHole(_world, random, new Point(Constants.BALL_RADIUS, Constants.BALL_RADIUS), Color.Black, true));
-            foreach (var hole in holes) hole.LoadContent(_content);
-            GoodHole = ObjectFactory.GetHole(_world, random, new Point(Constants.BALL_RADIUS, Constants.BALL_RADIUS / 2), _colorPallete[0], true);
-            GoodHole.LoadContent(_content);
-
             PlayerBall = new PlayerBall();
-            PlayerBall.LoadContent(_content);
 
-            for (int j = 0; j < random.Next(1, 5); j++)
+            int ballRadius = (int)(Constants.BALL_RADIUS * _tilemap.Scale);
+
+            foreach (var obj in _tilemap.Objects)
             {
-                var ball = ObjectFactory.GetCircleBall(_world, random, Constants.BALL_RADIUS, _colorPallete[3], _colorPallete[4], randomPos: true);
-                balls.Add(ball.Item1, ball.Item2);
-            }
-            for (int j = 0; j < random.Next(1, 5); j++)
-            {
-                var ball = ObjectFactory.GetSquareBall(_world, random, Constants.BALL_RADIUS, _colorPallete[3], _colorPallete[4], randomPos: true);
-                balls.Add(ball.Item1, ball.Item2);
+                switch (obj.Data.Type)
+                {
+                    case "CIRCLE":
+                        var circle = ObjectFactory.GetCircleBall(_world, ballRadius, _colorPallete[3], _colorPallete[4], _tilemap.GetPos(obj.Position));
+                        balls.Add(circle.Item1, circle.Item2);
+                        break;
+
+                    case "SQUARE":
+                        var square = ObjectFactory.GetSquareBall(_world, ballRadius, _colorPallete[3], _colorPallete[4], _tilemap.GetPos(obj.Position));
+                        balls.Add(square.Item1, square.Item2);
+                        break;
+
+                    case "HOLE_CIRCLE":
+                        holes.Add(ObjectFactory.GetCircleHole(_world, new Point(ballRadius), _colorPallete[1], _tilemap.GetPos(obj.Position), obj.Data.Lifespan));
+                        break;
+
+                    case "HOLE_SQUARE":
+                        holes.Add(ObjectFactory.GetSquareHole(_world, new Point(ballRadius), _colorPallete[1], _tilemap.GetPos(obj.Position), obj.Data.Lifespan));
+                        break;
+                }
             }
 
+            foreach (var hole in holes) hole.LoadContent(_content);
             foreach (var (_, ball) in balls) ball.LoadContent(_content);
+            PlayerBall.LoadContent(_content, _colorPallete[4]);
 
-            _activeBallHash = balls.Keys.ToList().First();
+            currBall = balls.GetEnumerator();
+            currBall.MoveNext();
+
+            currState = lastState = Keyboard.GetState();
+
+            _fireworks = new FireworkParticleSystem(ScreenManager.Game, 20);
         }
 
         public override void Unload()
@@ -128,10 +138,24 @@ namespace WrongHole.Screens
         // parameter to false in order to stop the base Update method wanting to transition off.
         public override void Update(GameTime gameTime, bool otherScreenHasFocus, bool coveredByOtherScreen)
         {
-            foreach (var (_, ball) in balls)
+            if (otherScreenHasFocus) return;
+
+            lastState = currState;
+            currState = Keyboard.GetState();
+
+            if (lastState.IsKeyDown(Keys.Space) && !currState.IsKeyDown(Keys.Space))
             {
-                ball.Update(gameTime);
+                if (!currBall.MoveNext() && currBall.Current.Value == null)
+                {
+                    currBall = balls.GetEnumerator();
+                    currBall.MoveNext();
+                };
             }
+
+            foreach (var (_, ball) in balls) ball.Update(gameTime);
+
+            List<Hole> removeHoles = new List<Hole>();
+
             foreach (var hole in holes)
             {
                 if (hole.Colliding && balls.ContainsKey(hole.CollisionHash))
@@ -139,92 +163,101 @@ namespace WrongHole.Screens
                     var toDelete = balls[hole.CollisionHash];
                     if (hole.Shape == toDelete.Shape)
                     {
-                        //TODO: Add score
-                        ++SpriteExampleGame.score;
-                        _fireworks.PlaceFirework(new Microsoft.Xna.Framework.Vector2(toDelete._body.Position.X, toDelete._body.Position.Y), Color.Green);
+                        _fireworks.PlaceFirework(Tools.ToXnaVector(toDelete._body.Position), _colorPallete[4]);
+
+                        if (--hole.Lifespan == 0) removeHoles.Add(hole);
                     }
                     else
                     {
-                        _fireworks.PlaceFirework(new Microsoft.Xna.Framework.Vector2(toDelete._body.Position.X, toDelete._body.Position.Y), Color.Red);
+                        explosion.Play();
+                        _shakingCountdown = 2f;
+                        if (!WrongHoleGame.score[CurrLevel]) WrongHoleGame.score[CurrLevel] = false;
+                        state = GameState.Fail;
+                        _fireworks.PlaceFirework(Tools.ToXnaVector(toDelete._body.Position), _colorPallete[0]);
                     }
                     _world.Remove(toDelete._body);
                     balls.Remove(hole.CollisionHash);
 
                     if (balls.Values.Count == 0)
                     {
-                        _shakingCountdown = 1f;
                         win.Play();
                         _shakingCountdown = 2f;
-                        exit = true;
+                        WrongHoleGame.score[CurrLevel] = true;
+                        state = GameState.Success;
                     }
-                    else _activeBallHash = balls.Keys.ToList().First();
+                    else currBall = balls.GetEnumerator();
+                    if (balls.Count != 0) currBall.MoveNext();
                 }
 
-                /*if (hole.Colliding && hole.CollisionHash != PlayerBallHash && balls.ContainsKey(hole.CollisionHash))
-                {
-                    var toDelete = balls[hole.CollisionHash];
-                    _fireworks.PlaceFirework(new Microsoft.Xna.Framework.Vector2(toDelete._body.Position.X, toDelete._body.Position.Y), Color.Red);
-                    _world.Remove(toDelete._body);
-                    balls.Remove(hole.CollisionHash);
-                }*/
                 hole.Update(gameTime);
+            }
+
+            foreach (var hole in removeHoles.ToArray())
+            {
+                _world.Remove(hole._body);
+                holes.Remove(hole);
             }
 
             _fireworks.Update(gameTime);
 
             if (_shakingCountdown > 0f) _shakingCountdown -= (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            if (exit && _shakingCountdown <= 0f) ExitScreen();
-
-            if (!exit)
+            if (state != GameState.Playing && _shakingCountdown <= 0f)
             {
-                var activeBall = balls[_activeBallHash];
+                switch (state)
+                {
+                    case GameState.Success:
+                        this.NextLevel();
+                        break;
+
+                    case GameState.Fail:
+                        this.NextLevel();
+                        break;
+                }
+            }
+
+            if (state == GameState.Playing)
+            {
+                var activeBall = currBall.Current.Value;
                 PlayerBall.Update(gameTime, ref activeBall);
-                balls[_activeBallHash] = activeBall;
             }
 
             base.Update(gameTime, otherScreenHasFocus, false);
+        }
+
+        public void NextLevel()
+        {
+            ScreenManager.AddScreen(new NextLevelMenuScreen(this), null);
         }
 
         public override void Draw(GameTime gameTime)
         {
             var spriteBatch = ScreenManager.SpriteBatch;
 
-            var textSize = bangers.MeasureString("Try to get all shapes in right holes...");
-            var textSize2 = bangers.MeasureString($"score - ${SpriteExampleGame.score}");
-
             _graphics.Clear(_colorPallete[2]);
 
-            // TODO: Add your drawing code here
             if (_shakingCountdown > 0f) spriteBatch.Begin(transformMatrix: Matrix.CreateTranslation(random.Next(-1, 1), random.Next(-1, 1), 0));
             else spriteBatch.Begin();
+
             DrawBoard(ref spriteBatch, _colorPallete[3], _colorPallete[1]);
+
             foreach (var hole in holes) hole.Draw(spriteBatch);
             foreach (var (hash, ball) in balls)
             {
-                if (hash == _activeBallHash) ball.Draw(spriteBatch, true);
+                if (hash == currBall.Current.Key) ball.Draw(spriteBatch, true);
                 else ball.Draw(spriteBatch, false);
             }
-            if (!exit) PlayerBall.Draw(spriteBatch, balls[_activeBallHash]._body.Position);
-            spriteBatch.DrawString(
-                bangers, "Try to get all shapes in right holes...",
-                new Microsoft.Xna.Framework.Vector2(
-                    (Constants.GAME_WIDTH - textSize.X) / 2,
-                    2 * textSize.Y),
-                _colorPallete[4]);
-            spriteBatch.DrawString(
-                bangers, $"score - {SpriteExampleGame.score}",
-                new Microsoft.Xna.Framework.Vector2(
-                    (Constants.GAME_WIDTH - textSize2.X) / 2,
-                    Constants.GAME_HEIGHT - 3 * textSize2.Y),
-                _colorPallete[4]);
+
+            if (state == GameState.Playing) PlayerBall.Draw(spriteBatch, currBall.Current.Value == null ? tainicom.Aether.Physics2D.Common.Vector2.Zero : currBall.Current.Value._body.Position);
+
             spriteBatch.End();
+
             _fireworks.Draw(gameTime);
         }
 
         protected override void DrawBoard(ref SpriteBatch spriteBatch, Color lighter, Color darker)
         {
-            _tilemap.Draw(spriteBatch, lighter);
+            _tilemap.Draw(spriteBatch, lighter, Font);
         }
     }
 }

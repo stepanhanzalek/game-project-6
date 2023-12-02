@@ -17,13 +17,16 @@ namespace WrongHole.Objects
 
         protected MouseState _prevMouseState;
 
+        protected Color _color;
+
         public PlayerBall()
         {
         }
 
-        public void LoadContent(ContentManager content)
+        public void LoadContent(ContentManager content, Color color)
         {
             _cueTexture = content.Load<Texture2D>("cue");
+            _color = color;
         }
 
         public void Update(GameTime gameTime, ref Ball ball)
@@ -53,7 +56,7 @@ namespace WrongHole.Objects
                 _cueTexture,
                 new Rectangle(_mouseState.Position, new Point((int)(Math.Abs(v.Length()) / _cueTexture.Height * _cueTexture.Width), (int)Math.Abs(v.Length()))),
                 null,
-                Color.White,
+                _color,
                 _rotation,
                 new Vector2(_cueTexture.Width, _cueTexture.Height) / 2,
                 SpriteEffects.None,

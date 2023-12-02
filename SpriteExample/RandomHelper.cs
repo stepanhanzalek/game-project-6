@@ -1,15 +1,16 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
+using WrongHole;
 
 namespace ParticleSystemExample
 {
     /// <summary>
-    /// A static class providing helper methods for generating 
+    /// A static class providing helper methods for generating
     /// random values.
     /// </summary>
     public static class RandomHelper
     {
-        static Random random = new Random();
+        private static Random random = new Random();
 
         /// <summary>
         /// Returns a random integer
@@ -18,7 +19,7 @@ namespace ParticleSystemExample
         public static int Next() => random.Next();
 
         /// <summary>
-        /// Returns a random integer between 0 and <paramref name="maxValue"/> 
+        /// Returns a random integer between 0 and <paramref name="maxValue"/>
         /// </summary>
         /// <param name="maxValue">The maximum value to return</param>
         /// <returns>A number between 0 and <paramref name="maxValue"/></returns>
@@ -43,7 +44,7 @@ namespace ParticleSystemExample
 
         /// <summary>
         /// Returns a random number within the specified range
-        /// </summary> 
+        /// </summary>
         /// <param name="minValue">The minimum end of the range</param>
         /// <param name="maxValue">The maximum end of the range</param>
         /// <returns>A radom float between <paramref name="minValue"/> and <paramref name="maxValue"/></returns>
@@ -86,6 +87,12 @@ namespace ParticleSystemExample
                 NextFloat(bounds.Y, bounds.Y + bounds.Height)
                 );
         }
+
+        public static string RandomString(int len)
+        {
+            string res = "";
+            for (int i = 0; i < len; i++) res = string.Concat(res, Constants.CHARS[random.Next(Constants.CHARS.Length)]);
+            return res;
+        }
     }
 }
-

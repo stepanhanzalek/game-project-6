@@ -1,0 +1,18 @@
+﻿tileset.png
+---world dimensions---
+704,512
+1,1
+---tilemap---
+2
+---borders---
+0,0|0,1
+0,0|1,0
+1,0|1,1
+0,1|1,1
+---scale---
+1
+---objects---
+0,305|0,26|CIRCLE|0
+0,25|0,7|HOLE_CLASSIC|1
+0,5|0,7|HOLE_ENDLESS|1
+0,75|0,7|HOLE_EXIT|1

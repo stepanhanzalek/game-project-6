@@ -9,8 +9,9 @@ namespace WrongHole.Screens
     public class SplashScreen : GameScreen
     {
         private ContentManager _content;
-        private Texture2D _background;
+        private SpriteFont _font;
         private TimeSpan _displayTime;
+        private Color[] _colorPallete;
 
         public override void Activate()
         {
@@ -18,8 +19,9 @@ namespace WrongHole.Screens
 
             if (_content == null) _content = new ContentManager(ScreenManager.Game.Services, "Content");
 
-            _background = _content.Load<Texture2D>("splash");
-            _displayTime = TimeSpan.FromSeconds(2);
+            _font = _content.Load<SpriteFont>("GNUTypewriter");
+            _colorPallete = Constants.MONOCHROMES[new Random().Next(Constants.MONOCHROMES.Length)];
+            _displayTime = TimeSpan.FromSeconds(5);
         }
 
         public override void HandleInput(GameTime gameTime, InputState input)
@@ -33,8 +35,10 @@ namespace WrongHole.Screens
 
         public override void Draw(GameTime gameTime)
         {
+            ScreenManager.GraphicsDevice.Clear(_colorPallete[2]);
             ScreenManager.SpriteBatch.Begin();
-            ScreenManager.SpriteBatch.Draw(_background, Vector2.Zero, Color.White);
+            var pos = Constants.GAME_CENTER - _font.MeasureString("Steve Hanzalek\n   presents") / 2;
+            ScreenManager.SpriteBatch.DrawString(_font, "Steve Hanzalek\n   presents", pos, _colorPallete[3]);
             ScreenManager.SpriteBatch.End();
         }
     }

@@ -73,9 +73,6 @@ namespace ParticleSystemExample
 
         #region protected fields
 
-        /// <summary>The BlendState to use with this particle system</summary>
-        protected BlendState blendState = BlendState.AlphaBlend;
-
         /// <summary>The filename of the texture to use for the particles</summary>
         protected string textureFilename;
 
@@ -198,16 +195,15 @@ namespace ParticleSystemExample
         {
             // tell sprite batch to begin, using the spriteBlendMode specified in
             // initializeConstants
-            spriteBatch.Begin(blendState: blendState);
+            spriteBatch.Begin();
 
             foreach (Particle p in particles)
             {
                 // skip inactive particles
                 if (!p.Active)
                     continue;
-
                 spriteBatch.Draw(texture, p.Position, null, p.Color,
-                    p.Rotation, origin, p.Scale, SpriteEffects.None, 0.0f);
+                    p.Rotation, origin, p.Scale, SpriteEffects.None, 0);
             }
 
             spriteBatch.End();

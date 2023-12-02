@@ -166,7 +166,7 @@ namespace WrongHole.StateManagement
         protected override void LoadContent()
         {
             SpriteBatch = new SpriteBatch(GraphicsDevice);
-            Font = _content.Load<SpriteFont>("bangers");
+            Font = _content.Load<SpriteFont>("GNUTypewriter");
             BlankTexture = _content.Load<Texture2D>("blank");
 
             // Tell each of the screens to load thier content

@@ -1,2 +1,2 @@
-﻿using var game = new WrongHole.SpriteExampleGame();
+﻿using var game = new WrongHole.WrongHoleGame();
 game.Run();

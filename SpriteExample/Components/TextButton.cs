@@ -1,8 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using WrongHole.Utils;
 
-namespace WrongHole.Screens
+namespace WrongHole.Components
 {
     public class TextButton : Button
     {
@@ -14,20 +15,20 @@ namespace WrongHole.Screens
 
         public TextButton(ContentManager content, Point center, string text, string textureName, SpriteFont font, Color color, Color colorSelected, Color colorText, bool active = true) : base(content, center, Point.Zero, textureName, color, colorSelected, active)
         {
-            this._font = font;
-            this._text = text;
-            this._colorText = colorText;
+            _font = font;
+            _text = text;
+            _colorText = colorText;
 
-            var size = Tools.ScalePoint(Tools.ToPoint(this._font.MeasureString(this._text)), 1.25f);
-            this._destRect = new Rectangle(center - Tools.ScalePoint(size, .5f), size);
+            var size = Tools.ScalePoint(Tools.ToPoint(_font.MeasureString(_text)), 1.25f);
+            _destRect = new Rectangle(center - Tools.ScalePoint(size, .5f), size);
         }
 
         public override void Draw(SpriteBatch spriteBatch)
         {
             base.Draw(spriteBatch);
 
-            var pos = Tools.ToXnaVector(this._destRect.Center) - this._font.MeasureString(this._text) / 2;
-            spriteBatch.DrawString(this._font, this._text, pos, this._colorText);
+            var pos = Tools.ToXnaVector(_destRect.Center) - _font.MeasureString(_text) / 2;
+            spriteBatch.DrawString(_font, _text, pos, _colorText);
         }
     }
 }

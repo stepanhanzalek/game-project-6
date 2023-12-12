@@ -4,7 +4,9 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using WrongHole.Components;
 using WrongHole.StateManagement;
+using WrongHole.Utils;
 
 namespace WrongHole.Screens
 {
@@ -18,7 +20,7 @@ namespace WrongHole.Screens
 
         protected MouseState _mouseStateLast;
 
-        protected Color[] _colorPallete;
+        protected Monochrome _monochrome;
 
         public LevelSelectionMenuScreen()
         {
@@ -32,23 +34,16 @@ namespace WrongHole.Screens
 
             _buttons = new List<Button>();
 
-            _colorPallete = Constants.MONOCHROMES[new Random().Next(Constants.MONOCHROMES.Length)];
+            _monochrome = Constants.MONOCHROMES[new Random().Next(Constants.MONOCHROMES.Length)];
 
             var font = _content.Load<SpriteFont>("GNUTypewriter");
 
             LevelButton[] levels = new LevelButton[WrongHoleGame.score.Length];
             string[] levelTexts = new string[WrongHoleGame.score.Length];
 
-            for (int i = 0; i < levels.Length; i++)
-            {
-                bool playable = true;
-                if (i > 0) playable = WrongHoleGame.score[i] || WrongHoleGame.score[i - 1];
-                if (playable && WrongHoleGame.score[i]) levelTexts[i] = $" {i}.";
-                else if (playable && !WrongHoleGame.score[i]) levelTexts[i] = $" {i} ";
-                else levelTexts[i] = " ? ";
-            };
+            for (int i = 0; i < levels.Length; i++) levelTexts[i] = GenerateLevelText(i);
 
-            var levelCenters = Tools.AlignButtonsHorizontally(levelTexts, font);
+            var levelCenters = Tools.AlignButtonsColumn(levelTexts, font, 3);
 
             for (int i = 0; i < levels.Length; i++)
             {
@@ -62,9 +57,9 @@ namespace WrongHole.Screens
                     levelTexts[i],
                     "button",
                     font,
-                    _colorPallete[0],
-                    _colorPallete[1],
-                    _colorPallete[3],
+                    _monochrome.Button,
+                    _monochrome.ButtonSelected,
+                    _monochrome.ButtonText,
                     !(levelTexts[i] == " ? "));
                 level.ButtonEventHandler += PlayLevel;
                 _buttons.Add(level);
@@ -78,9 +73,9 @@ namespace WrongHole.Screens
                 "Back",
                 "button",
                 font,
-                _colorPallete[0],
-                _colorPallete[1],
-                _colorPallete[3]);
+                _monochrome.Button,
+                _monochrome.ButtonSelected,
+                _monochrome.ButtonText);
             exitButton.ButtonEventHandler += ExitToMenu;
             _buttons.Add(exitButton);
 
@@ -100,7 +95,7 @@ namespace WrongHole.Screens
         {
             var spriteBatch = ScreenManager.SpriteBatch;
 
-            ScreenManager.GraphicsDevice.Clear(_colorPallete[3]);
+            ScreenManager.GraphicsDevice.Clear(_monochrome.Background);
 
             spriteBatch.Begin();
 
@@ -109,6 +104,15 @@ namespace WrongHole.Screens
             foreach (var button in _buttons) button.Draw(spriteBatch);
 
             spriteBatch.End();
+        }
+
+        private string GenerateLevelText(int i)
+        {
+            bool playable = true;
+            if (i > 0) playable = WrongHoleGame.score[i] || WrongHoleGame.score[i - 1];
+            if (playable && WrongHoleGame.score[i]) return $" {i}.";
+            else if (playable && !WrongHoleGame.score[i]) return $" {i} ";
+            return " ? ";
         }
 
         private void PlayLevel(object sender, EventArgs e)

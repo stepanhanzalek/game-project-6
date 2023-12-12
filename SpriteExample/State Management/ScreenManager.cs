@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using WrongHole.Utils;
 
 namespace WrongHole.StateManagement
 {
@@ -27,6 +28,7 @@ namespace WrongHole.StateManagement
         public ScreenManager(Game game) : base(game)
         {
             _content = new ContentManager(game.Services, "Content");
+            SoundEffectManager = new SoundEffectManager();
         }
 
         /// <summary>
@@ -38,6 +40,8 @@ namespace WrongHole.StateManagement
         /// A SpriteFont shared by all GameScreens
         /// </summary>
         public SpriteFont Font { get; private set; }
+
+        public SoundEffectManager SoundEffectManager { get; private set; }
 
         /// <summary>
         /// A blank texture that can be used by the screens.
@@ -167,7 +171,8 @@ namespace WrongHole.StateManagement
         {
             SpriteBatch = new SpriteBatch(GraphicsDevice);
             Font = _content.Load<SpriteFont>("GNUTypewriter");
-            BlankTexture = _content.Load<Texture2D>("blank");
+            BlankTexture = _content.Load<Texture2D>(Constants.TEXTURE_PATH + "blank");
+            SoundEffectManager.LoadContent(_content);
 
             // Tell each of the screens to load thier content
             foreach (var screen in _screens)

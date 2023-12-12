@@ -10,7 +10,7 @@ using WrongHole.Utils;
 
 namespace WrongHole.Screens
 {
-    public class NextLevelMenuScreen : GameScreen
+    public class PauseLevelScreen : GameScreen
     {
         protected List<Button> _buttons;
 
@@ -22,9 +22,9 @@ namespace WrongHole.Screens
 
         protected Monochrome _monochrome;
 
-        protected TileMapLevelScreen _currLvl; // This screen should be already removed from the screen manager.
+        protected EndlessLevelScreen _currLvl; // This screen should be already removed from the screen manager.
 
-        public NextLevelMenuScreen(TileMapLevelScreen currentLevel)
+        public PauseLevelScreen(EndlessLevelScreen currentLevel)
         {
             _currLvl = currentLevel;
         }
@@ -41,11 +41,11 @@ namespace WrongHole.Screens
 
             var font = _content.Load<SpriteFont>("GNUTypewriter");
 
-            var nextLvl = WrongHoleGame.score[this._currLvl.CurrentLevel] && this._currLvl.CurrentLevel + 1 < WrongHoleGame.score.Length;
+            var paused = _currLvl._levelState == TileMapLevelScreen.LevelState.Pause;
 
             var buttonTexts =
-                nextLvl
-                    ? new string[] { "Replay", "Next Level", "Menu" }
+                paused
+                    ? new string[] { "Replay", "Resume", "Menu" }
                     : new string[] { "Replay", "Menu" };
             var buttonCenters = Tools.AlignButtonsHorizontally(buttonTexts, font);
 
@@ -61,9 +61,9 @@ namespace WrongHole.Screens
             buttonReplay.ButtonEventHandler += ReplayLevel;
             _buttons.Add(buttonReplay);
 
-            if (nextLvl)
+            if (paused)
             {
-                var buttonNextLevel = new TextButton(
+                var buttonResumeLevel = new TextButton(
                     _content,
                     buttonCenters[1],
                     buttonTexts[1],
@@ -72,14 +72,14 @@ namespace WrongHole.Screens
                     _monochrome.Button,
                     _monochrome.ButtonSelected,
                     _monochrome.ButtonText);
-                buttonNextLevel.ButtonEventHandler += NextLevel;
-                _buttons.Add(buttonNextLevel);
+                buttonResumeLevel.ButtonEventHandler += ResumeLevel;
+                _buttons.Add(buttonResumeLevel);
             }
 
             var buttonMenu = new TextButton(
                 _content,
-                buttonCenters[nextLvl ? 2 : 1],
-                buttonTexts[nextLvl ? 2 : 1],
+                buttonCenters[paused ? 2 : 1],
+                buttonTexts[paused ? 2 : 1],
                 "square",
                 font,
                 _monochrome.Button,
@@ -124,20 +124,21 @@ namespace WrongHole.Screens
         private void ReplayLevel(object sender, EventArgs e)
         {
             ScreenManager.RemoveScreen(this);
+            ScreenManager.RemoveScreen(_currLvl);
 
-            ScreenManager.AddScreen(new TileMapLevelScreen(this._currLvl.CurrentLevel), null);
+            ScreenManager.AddScreen(new EndlessLevelScreen(), null);
         }
 
-        private void NextLevel(object sender, EventArgs e)
+        private void ResumeLevel(object sender, EventArgs e)
         {
             ScreenManager.RemoveScreen(this);
-
-            ScreenManager.AddScreen(new TileMapLevelScreen(++this._currLvl.CurrentLevel), null);
+            _currLvl._levelState = TileMapLevelScreen.LevelState.Playing;
         }
 
         private void ExitToMenu(object sender, EventArgs e)
         {
             ScreenManager.RemoveScreen(this);
+            ScreenManager.RemoveScreen(_currLvl);
 
             ScreenManager.AddScreen(new IntroScreen(), null);
         }

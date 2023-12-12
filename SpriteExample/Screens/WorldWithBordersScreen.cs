@@ -6,7 +6,7 @@ using tainicom.Aether.Physics2D.Dynamics;
 using WrongHole.StateManagement;
 using Vector2 = tainicom.Aether.Physics2D.Common.Vector2;
 
-namespace WrongHole.Screens.GameScreens
+namespace WrongHole.Screens
 {
     public class WorldWithBordersScreen : GameScreen
     {
@@ -50,24 +50,8 @@ namespace WrongHole.Screens.GameScreens
         // parameter to false in order to stop the base Update method wanting to transition off.
         public override void Update(GameTime gameTime, bool otherScreenHasFocus, bool coveredByOtherScreen)
         {
-            for (int i = 0; i < 5; ++i) _world.Step(Math.Min((float)gameTime.ElapsedGameTime.TotalSeconds, (1f / 30f)));
+            for (int i = 0; i < 10; ++i) _world.Step(Math.Min((float)gameTime.ElapsedGameTime.TotalSeconds, 1f / 30f));
             base.Update(gameTime, otherScreenHasFocus, false);
-        }
-
-        protected virtual void DrawBoard(ref SpriteBatch spriteBatch, Color lighter, Color darker)
-        {
-            spriteBatch.Draw(_blankTexture,
-                new Rectangle(
-                    new Point((int)Constants.GAME_WIDTH_LOW - 10, (int)Constants.GAME_HEIGHT_LOW - 10),
-                    new Point((int)(Constants.GAME_WIDTH * 0.6f + 20), (int)(Constants.GAME_HEIGHT * 0.4f + 20))
-                ),
-                darker);
-            spriteBatch.Draw(_blankTexture,
-                new Rectangle(
-                    new Point((int)Constants.GAME_WIDTH_LOW, (int)Constants.GAME_HEIGHT_LOW),
-                    new Point((int)(Constants.GAME_WIDTH * 0.6f), (int)(Constants.GAME_HEIGHT * 0.4f))
-                ),
-                lighter);
         }
     }
 }

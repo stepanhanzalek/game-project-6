@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Media;
 using WrongHole.Screens;
 using WrongHole.StateManagement;
+using WrongHole.Utils;
 
 namespace WrongHole
 {
@@ -14,9 +16,10 @@ namespace WrongHole
     public class WrongHoleGame : Game
     {
         public static bool[] score;
+        public static int hiScore;
+        private static Song bgMusic;
         private readonly ScreenManager screenManager;
         private GraphicsDeviceManager graphics;
-        private Song bgMusic;
 
         /// <summary>
         /// Constructs the game
@@ -52,11 +55,14 @@ namespace WrongHole
         /// </summary>
         protected override void LoadContent()
         {
-            bgMusic = Content.Load<Song>("bg_music");
+            bgMusic = Content.Load<Song>(Constants.SOUND_PATH + "bg_music");
             MediaPlayer.IsRepeating = true;
-        TODO: MediaPlayer.Play(bgMusic);
+            MediaPlayer.Play(bgMusic);
 
-            score = File.ReadAllText(Constants.SCORE_PATH).Trim().Split(',').Select(x => bool.Parse(x)).ToArray();
+            var progressFile = File.ReadAllText(Constants.SCORE_PATH).Trim().Split(',');
+
+            hiScore = int.Parse(progressFile[0]);
+            score = progressFile.TakeLast(progressFile.Length - 1).Select(x => bool.Parse(x)).ToArray();
         }
 
         /// <summary>
@@ -81,7 +87,11 @@ namespace WrongHole
 
         protected override void UnloadContent()
         {
-            File.WriteAllText(Constants.SCORE_PATH, String.Join(',', score.Select(x => x.ToString())));
+            var progressFile = new List<string>();
+            progressFile.Add(hiScore.ToString());
+            progressFile.AddRange(score.Select(x => x.ToString()));
+
+            File.WriteAllText(Constants.SCORE_PATH, String.Join(',', progressFile));
 
             base.UnloadContent();
         }

@@ -3,11 +3,12 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using WrongHole.Utils;
 using Vector2Aether = tainicom.Aether.Physics2D.Common.Vector2;
 
 namespace WrongHole.Objects
 {
-    public class PlayerBall
+    public class Cue
     {
         protected Texture2D _cueTexture;
 
@@ -19,13 +20,13 @@ namespace WrongHole.Objects
 
         protected Color _color;
 
-        public PlayerBall()
+        public Cue()
         {
         }
 
         public void LoadContent(ContentManager content, Color color)
         {
-            _cueTexture = content.Load<Texture2D>("cue");
+            _cueTexture = content.Load<Texture2D>(Constants.TEXTURE_PATH + "cue");
             _color = color;
         }
 

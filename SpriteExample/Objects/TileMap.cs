@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using tainicom.Aether.Physics2D.Dynamics;
+using WrongHole.Utils;
 using Vector2A = tainicom.Aether.Physics2D.Common.Vector2;
 
 namespace WrongHole
@@ -25,7 +26,7 @@ namespace WrongHole
 
         public float Scale { get; init; }
 
-        public void Draw(SpriteBatch spriteBatch, Color color)
+        public void Draw(SpriteBatch spriteBatch, Color color, bool drawBorders = false)
         {
             for (int y = 0; y < MapHeight; y++)
             {
@@ -47,12 +48,14 @@ namespace WrongHole
                             ),
                         Tiles[index],
                         color
-                        );
+                    );
                 }
             }
+
+            if (drawBorders) DrawBorders(spriteBatch);
         }
 
-        public void Draw(SpriteBatch spriteBatch, Color color, SpriteFont font)
+        public void Draw(SpriteBatch spriteBatch, Color color, SpriteFont font, bool drawBorders = false)
         {
             for (int y = 0; y < MapHeight; y++)
             {
@@ -74,7 +77,7 @@ namespace WrongHole
                             ),
                         Tiles[index],
                         color
-                        );
+                    );
                 }
             }
 
@@ -92,6 +95,8 @@ namespace WrongHole
                         color);
                 }
             }
+
+            if (drawBorders) DrawBorders(spriteBatch);
         }
 
         public void AddBorders(World world)
@@ -101,7 +106,6 @@ namespace WrongHole
                 Vector2A center = new Vector2A(
                     Constants.GAME_WIDTH / 2 - (float)MapWidth / 2 * TileWidth * Scale,
                     Constants.GAME_HEIGHT / 2 - (float)MapHeight / 2 * TileHeight * Scale);
-                var X = new Vector2A(border.X, border.Y);
                 var edge = world.CreateEdge(
                     new Vector2A(border.X, border.Y) * Scale + center,
                     new Vector2A(border.Z, border.W) * Scale + center);
@@ -115,6 +119,28 @@ namespace WrongHole
             return new Vector2A(
                     Constants.GAME_WIDTH / 2 - (float)MapWidth / 2 * TileWidth * Scale + pos.X * Scale,
                     Constants.GAME_HEIGHT / 2 - (float)MapHeight / 2 * TileHeight * Scale + pos.Y * Scale);
+        }
+
+        public void DrawBorders(SpriteBatch spriteBatch)
+        {
+            Vector2A center = new Vector2A(
+                Constants.GAME_WIDTH / 2 - (float)MapWidth / 2 * TileWidth * Scale,
+                Constants.GAME_HEIGHT / 2 - (float)MapHeight / 2 * TileHeight * Scale);
+
+            foreach (var border in Borders)
+            {
+                spriteBatch.Draw(
+                    Texture,
+                    new Rectangle(
+                        (int)(border.X * Scale + center.X) - 1,
+                        (int)(border.Y * Scale + center.Y) - 1,
+                        (int)((border.Z - border.X) * Scale) + 2,
+                        (int)((border.W - border.Y) * Scale) + 2
+                        ),
+                    Tiles[13],
+                    Color.Red
+                );
+            }
         }
     }
 }

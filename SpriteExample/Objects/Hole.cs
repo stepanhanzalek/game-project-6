@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using tainicom.Aether.Physics2D.Dynamics;
 using tainicom.Aether.Physics2D.Dynamics.Contacts;
+using WrongHole.Utils;
 
 namespace WrongHole.Objects
 {
@@ -42,7 +43,7 @@ namespace WrongHole.Objects
 
         public void LoadContent(ContentManager content)
         {
-            _texture = content.Load<Texture2D>(_textureName);
+            _texture = content.Load<Texture2D>(Constants.TEXTURE_PATH + _textureName);
         }
 
         public virtual void Update(GameTime gameTime)

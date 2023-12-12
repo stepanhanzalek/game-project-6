@@ -35,7 +35,7 @@ namespace WrongHolePipeline
         {
             var sections = Regex.Split(data, @"---.*---").Select(line => line.Trim()).ToList();
 
-            this.TextureFileName = sections[0];
+            this.TextureFileName = "Textures/" + sections[0];
 
             var dimensions = sections[1].Split('\n').Select(line => line.Split(',').Select(x => int.Parse(x)).ToList()).ToList();
             (this.TileWidth, this.TileHeight) = (dimensions[0][0], dimensions[0][1]);

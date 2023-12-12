@@ -14,78 +14,6 @@
 
 #---------------------------------- Content ---------------------------------#
 
-#begin ball.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:ball.png
-
-#begin bg_music.wav
-/importer:WavImporter
-/processor:SongProcessor
-/processorParam:Quality=Best
-/build:bg_music.wav
-
-#begin blank.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:blank.png
-
-#begin button.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:button.png
-
-#begin circle.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:circle.png
-
-#begin cue.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:cue.png
-
-#begin explosion.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:explosion.wav
-
 #begin GNUTypewriter.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
@@ -100,79 +28,97 @@
 /processorParam:TextureFormat=Compressed
 /build:GNUTypewriterTitle.spritefont
 
-#begin hitHurt.wav
+#begin Levels/intro.tmap
+/importer:TileMapImporter
+/processor:TileMapProcessor
+/processorParam:Scale=1
+/build:Levels/intro.tmap
+
+#begin Levels/lvl_endless.tmap
+/importer:TileMapImporter
+/processor:TileMapProcessor
+/processorParam:Scale=1
+/build:Levels/lvl_endless.tmap
+
+#begin Levels/lvl0.tmap
+/importer:TileMapImporter
+/processor:TileMapProcessor
+/processorParam:Scale=1
+/build:Levels/lvl0.tmap
+
+#begin Levels/lvl1.tmap
+/importer:TileMapImporter
+/processor:TileMapProcessor
+/processorParam:Scale=1
+/build:Levels/lvl1.tmap
+
+#begin Levels/lvl2.tmap
+/importer:TileMapImporter
+/processor:TileMapProcessor
+/processorParam:Scale=1
+/build:Levels/lvl2.tmap
+
+#begin Levels/lvl3.tmap
+/importer:TileMapImporter
+/processor:TileMapProcessor
+/processorParam:Scale=1
+/build:Levels/lvl3.tmap
+
+#begin Levels/lvl4.tmap
+/importer:TileMapImporter
+/processor:TileMapProcessor
+/processorParam:Scale=1
+/build:Levels/lvl4.tmap
+
+#begin Levels/lvl5.tmap
+/importer:TileMapImporter
+/processor:TileMapProcessor
+/processorParam:Scale=1
+/build:Levels/lvl5.tmap
+
+#begin Levels/lvl6.tmap
+/importer:TileMapImporter
+/processor:TileMapProcessor
+/processorParam:Scale=1
+/build:Levels/lvl6.tmap
+
+#begin Levels/lvl7.tmap
+/importer:TileMapImporter
+/processor:TileMapProcessor
+/processorParam:Scale=1
+/build:Levels/lvl7.tmap
+
+#begin Levels/lvl8.tmap
+/importer:TileMapImporter
+/processor:TileMapProcessor
+/processorParam:Scale=1
+/build:Levels/lvl8.tmap
+
+#begin Sounds/bg_music.wav
+/importer:WavImporter
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Sounds/bg_music.wav
+
+#begin Sounds/explosion.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:hitHurt.wav
+/build:Sounds/explosion.wav
 
-#begin hole1.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:hole1.png
-
-#begin hole2.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:hole2.png
-
-#begin intro.tmap
-/importer:TileMapImporter
-/processor:TileMapProcessor
-/processorParam:Scale=1
-/build:intro.tmap
-
-#begin lvl0.tmap
-/importer:TileMapImporter
-/processor:TileMapProcessor
-/processorParam:Scale=1
-/build:lvl0.tmap
-
-#begin lvl1.tmap
-/importer:TileMapImporter
-/processor:TileMapProcessor
-/processorParam:Scale=1
-/build:lvl1.tmap
-
-#begin lvl2.tmap
-/importer:TileMapImporter
-/processor:TileMapProcessor
-/processorParam:Scale=1
-/build:lvl2.tmap
-
-#begin lvl3.tmap
-/importer:TileMapImporter
-/processor:TileMapProcessor
-/processorParam:Scale=1
-/build:lvl3.tmap
-
-#begin lvl4.tmap
-/importer:TileMapImporter
-/processor:TileMapProcessor
-/processorParam:Scale=1
-/build:lvl4.tmap
-
-#begin pickupCoin.wav
+#begin Sounds/hitHurt.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:pickupCoin.wav
+/build:Sounds/hitHurt.wav
 
-#begin square.png
+#begin Sounds/pickupCoin.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/pickupCoin.wav
+
+#begin Textures/ball.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -182,9 +128,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:square.png
+/build:Textures/ball.png
 
-#begin tileset.png
+#begin Textures/blank.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -194,5 +140,101 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:tileset.png
+/build:Textures/blank.png
+
+#begin Textures/brown-texture.jpg
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/brown-texture.jpg
+
+#begin Textures/button.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/button.png
+
+#begin Textures/circle.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/circle.png
+
+#begin Textures/cue.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/cue.png
+
+#begin Textures/hole1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/hole1.png
+
+#begin Textures/hole2.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/hole2.png
+
+#begin Textures/square.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/square.png
+
+#begin Textures/tileset.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/tileset.png
 

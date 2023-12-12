@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using ParticleSystemExample;
 using WrongHole.Objects;
-using WrongHole.Screens.GameScreens;
 using WrongHole.StateManagement;
+using WrongHole.Utils;
 
 namespace WrongHole.Screens
 {
@@ -15,47 +14,46 @@ namespace WrongHole.Screens
     // of whatever transitions the screens on top of it may be doing.
     public class IntroScreen : WorldWithBordersScreen
     {
-        private Hole holeClassic;
-        private Hole holeEndless;
-        private Hole holeExit;
+        private Hole _holeClassic;
+        private Hole _holeEndless;
+        private Hole _holeExit;
 
-        private Ball ball;
-
-        private SoundEffect hit;
-
-        private SoundEffect win;
-
-        private SpriteFont Font;
+        private Ball _ball;
 
         private SpriteFont FontTitle;
 
-        private PlayerBall PlayerBall;
+        private Cue _cue;
 
         private FireworkParticleSystem _fireworks;
 
         private float _shakingCountdown;
 
-        private ExitState exit = ExitState.Idle;
+        private ExitState _exitState = ExitState.Idle;
 
-        private Color[] _colorPallete;
+        private Monochrome _monochrome;
 
         private TileMap _tilemap;
 
-        private Random random = new Random();
-
         private string _tilemapName;
 
-        private Queue<double> titleCurve = new Queue<double>(Constants.TITLE_CURVE);
+        private Random _random;
 
-        private double titleCountdown = 0f;
+        private Queue<double> _titleCurve;
 
-        private string title = "Wr ng H0le";
+        private double _titleCountdown;
+
+        private string _title;
 
         public IntroScreen()
         {
             TransitionOnTime = TimeSpan.FromSeconds(0.5);
             TransitionOffTime = TimeSpan.FromSeconds(0.5);
             _tilemapName = "intro";
+            _random = new Random();
+            _title = "Wr ng H0le";
+            _titleCountdown = 0f;
+            _exitState = ExitState.Idle;
+            _titleCurve = new Queue<double>(Constants.TITLE_CURVE);
         }
 
         private enum ExitState
@@ -70,17 +68,14 @@ namespace WrongHole.Screens
         {
             base.Activate();
 
-            _colorPallete = Constants.MONOCHROMES[random.Next(Constants.MONOCHROMES.Length)];
+            _monochrome = Constants.MONOCHROMES[new Random().Next(Constants.MONOCHROMES.Length)];
 
-            hit = _content.Load<SoundEffect>("hitHurt");
-            win = _content.Load<SoundEffect>("pickupCoin");
-            Font = _content.Load<SpriteFont>("GNUTypewriter");
             FontTitle = _content.Load<SpriteFont>("GNUTypewriterTitle");
-            _tilemap = _content.Load<TileMap>(this._tilemapName);
+            _tilemap = _content.Load<TileMap>(Constants.TILEMAP_PATH + this._tilemapName);
 
             _tilemap.AddBorders(_world);
 
-            PlayerBall = new PlayerBall();
+            _cue = new Cue();
 
             int ballRadius = (int)(Constants.BALL_RADIUS * _tilemap.Scale);
 
@@ -89,28 +84,28 @@ namespace WrongHole.Screens
                 switch (obj.Data.Type)
                 {
                     case "CIRCLE":
-                        ball = ObjectFactory.GetCircleBall(_world, ballRadius, _colorPallete[3], _colorPallete[4], _tilemap.GetPos(obj.Position)).Item2;
+                        _ball = ObjectFactory.GetCircleBall(_world, ballRadius, _monochrome.Ball, _monochrome.BallActive, _tilemap.GetPos(obj.Position)).Item2;
                         break;
 
                     case "HOLE_CLASSIC":
-                        holeClassic = ObjectFactory.GetCircleHole(_world, new Point(ballRadius), _colorPallete[1], _tilemap.GetPos(obj.Position), obj.Data.Lifespan);
+                        _holeClassic = ObjectFactory.GetCircleHole(_world, new Point(ballRadius), _monochrome.Hole, _tilemap.GetPos(obj.Position), obj.Data.Lifespan);
                         break;
 
-                    /*case "HOLE_ENDLESS":
-                        holeEndless = ObjectFactory.GetCircleHole(_world, new Point(ballRadius), _colorPallete[1], _tilemap.GetPos(obj.Position), obj.Data.Lifespan);
-                        break;*/
+                    case "HOLE_ENDLESS":
+                        _holeEndless = ObjectFactory.GetCircleHole(_world, new Point(ballRadius), _monochrome.Hole, _tilemap.GetPos(obj.Position), obj.Data.Lifespan);
+                        break;
 
                     case "HOLE_EXIT":
-                        holeExit = ObjectFactory.GetCircleHole(_world, new Point(ballRadius), _colorPallete[1], _tilemap.GetPos(obj.Position), obj.Data.Lifespan);
+                        _holeExit = ObjectFactory.GetCircleHole(_world, new Point(ballRadius), _monochrome.Hole, _tilemap.GetPos(obj.Position), obj.Data.Lifespan);
                         break;
                 }
             }
 
-            ball.LoadContent(_content);
-            holeClassic.LoadContent(_content);
-            //holeEndless.LoadContent(_content);
-            holeExit.LoadContent(_content);
-            PlayerBall.LoadContent(_content, _colorPallete[4]);
+            _ball.LoadContent(_content);
+            _holeClassic.LoadContent(_content);
+            _holeEndless.LoadContent(_content);
+            _holeExit.LoadContent(_content);
+            _cue.LoadContent(_content, _monochrome.BallActive);
 
             _fireworks = new FireworkParticleSystem(ScreenManager.Game, 20);
         }
@@ -120,57 +115,53 @@ namespace WrongHole.Screens
             _content.Unload();
         }
 
+        public override void HandleInput(GameTime gameTime, InputState input)
+        {
+            if (_exitState == ExitState.Idle) _cue.Update(gameTime, ref _ball);
+
+            base.HandleInput(gameTime, input);
+        }
+
         // Unlike most screens, this should not transition off even if
         // it has been covered by another screen: it is supposed to be
         // covered, after all! This overload forces the coveredByOtherScreen
         // parameter to false in order to stop the base Update method wanting to transition off.
         public override void Update(GameTime gameTime, bool otherScreenHasFocus, bool coveredByOtherScreen)
         {
-            if (otherScreenHasFocus) return;
+            _ball.Update(gameTime);
 
-            ball.Update(gameTime);
-
-            if (holeClassic.Colliding)
+            if (_holeClassic.Colliding)
             {
-                _fireworks.PlaceFirework(Tools.ToXnaVector(ball._body.Position), _colorPallete[4]);
-                _world.Remove(ball._body);
-                win.Play();
-                _shakingCountdown = 2f;
-                exit = ExitState.Classic;
+                InitiateClassic(Tools.ToXnaVector(_ball._body.Position));
+                _world.Remove(_ball._body);
             }
 
-            /*if (holeEndless.Colliding)
+            if (_holeEndless.Colliding)
             {
-                //_fireworks.PlaceFirework(Tools.ToXnaVector(ball._body.Position), _colorPallete[4]);
-                //_world.Remove(ball._body);
-                //win.Play();
-                //_shakingCountdown = 2f;
-                //exit = ExitState.Endless;
-            }*/
-
-            if (holeExit.Colliding)
-            {
-                _fireworks.PlaceFirework(Tools.ToXnaVector(ball._body.Position), _colorPallete[0]);
-                _world.Remove(ball._body);
-                win.Play();
-                _shakingCountdown = 2f;
-                exit = ExitState.Exit;
+                InitiateEndless(Tools.ToXnaVector(_ball._body.Position));
+                _world.Remove(_ball._body);
             }
 
-            holeClassic.Update(gameTime);
-            //holeEndless.Update(gameTime);
-            holeExit.Update(gameTime);
-            _fireworks.Update(gameTime);
+            if (_holeExit.Colliding)
+            {
+                InitiateExit(Tools.ToXnaVector(_ball._body.Position));
+                _world.Remove(_ball._body);
+            }
 
             if (_shakingCountdown > 0f) _shakingCountdown -= (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            if (exit != ExitState.Idle && _shakingCountdown <= 0f)
+            if (_exitState != ExitState.Idle && _shakingCountdown <= 0f)
             {
-                switch (exit)
+                switch (_exitState)
                 {
                     case ExitState.Classic:
                         ScreenManager.RemoveScreen(this);
                         ScreenManager.AddScreen(new LevelSelectionMenuScreen(), null);
+                        break;
+
+                    case ExitState.Endless:
+                        ScreenManager.RemoveScreen(this);
+                        ScreenManager.AddScreen(new EndlessLevelScreen(), null);
                         break;
 
                     case ExitState.Exit:
@@ -179,57 +170,92 @@ namespace WrongHole.Screens
                 }
             }
 
-            if (exit == ExitState.Idle) PlayerBall.Update(gameTime, ref ball);
-
+            _holeClassic.Update(gameTime);
+            _holeEndless.Update(gameTime);
+            _holeExit.Update(gameTime);
+            _fireworks.Update(gameTime);
             UpdateTitle(gameTime);
 
             base.Update(gameTime, otherScreenHasFocus, false);
         }
 
+        public void InitiateExit(Vector2 fireworkPosition)
+        {
+            _fireworks.PlaceFirework(fireworkPosition, _monochrome.FireworkFail);
+            ScreenManager.SoundEffectManager.Explosion.Play();
+            _shakingCountdown = 2f;
+            _exitState = ExitState.Exit;
+        }
+
+        public void InitiateClassic(Vector2 fireworkPosition)
+        {
+            _fireworks.PlaceFirework(fireworkPosition, _monochrome.FireworkWin);
+            ScreenManager.SoundEffectManager.Win.Play();
+            _shakingCountdown = 2f;
+            _exitState = ExitState.Classic;
+        }
+
+        public void InitiateEndless(Vector2 fireworkPosition)
+        {
+            _fireworks.PlaceFirework(fireworkPosition, _monochrome.FireworkWin);
+            ScreenManager.SoundEffectManager.Win.Play();
+            _shakingCountdown = 2f;
+            _exitState = ExitState.Endless;
+        }
+
         public void UpdateTitle(GameTime gameTime)
         {
-            if (titleCountdown <= 0f)
+            if (_titleCountdown <= 0f)
             {
-                title = $"{RandomHelper.RandomString(2)} {RandomHelper.RandomString(2)} {RandomHelper.RandomString(4)}";
-                if (titleCurve.Count == 0) titleCurve = new Queue<double>(Constants.TITLE_CURVE);
-                titleCountdown = titleCurve.Dequeue();
-                if (titleCountdown == 5000f) title = "Wr ng H0le";
+                _title = $"{RandomHelper.RandomString(2)} {RandomHelper.RandomString(2)} {RandomHelper.RandomString(4)}";
+                if (_titleCurve.Count == 0) _titleCurve = new Queue<double>(Constants.TITLE_CURVE);
+                _titleCountdown = _titleCurve.Dequeue();
+                if (_titleCountdown == 5000f) _title = "Wr ng H0le";
             }
-            titleCountdown -= gameTime.ElapsedGameTime.TotalMilliseconds;
+            _titleCountdown -= gameTime.ElapsedGameTime.TotalMilliseconds;
         }
 
         public override void Draw(GameTime gameTime)
         {
             var spriteBatch = ScreenManager.SpriteBatch;
 
-            _graphics.Clear(_colorPallete[2]);
-
-            if (_shakingCountdown > 0f) spriteBatch.Begin(transformMatrix: Matrix.CreateTranslation(random.Next(-1, 1), random.Next(-1, 1), 0));
+            if (_shakingCountdown > 0f) spriteBatch.Begin(transformMatrix: Matrix.CreateTranslation(_random.Next(-1, 1), _random.Next(-1, 1), 0));
             else spriteBatch.Begin();
 
-            DrawBoard(ref spriteBatch, _colorPallete[3], _colorPallete[1]);
+            DrawTileMap(_monochrome.Background);
 
-            if (exit != ExitState.Classic) holeClassic.Draw(spriteBatch);
-            //if (exit != ExitState.Endless) holeEndless.Draw(spriteBatch);
-            if (exit != ExitState.Exit) holeExit.Draw(spriteBatch);
-            if (exit == ExitState.Idle) ball.Draw(spriteBatch, true);
+            if (_exitState != ExitState.Classic) _holeClassic.Draw(spriteBatch);
+            if (_exitState != ExitState.Endless) _holeEndless.Draw(spriteBatch);
+            if (_exitState != ExitState.Exit) _holeExit.Draw(spriteBatch);
+            if (_exitState == ExitState.Idle) _ball.Draw(spriteBatch, true);
 
-            if (exit == ExitState.Idle) PlayerBall.Draw(spriteBatch, ball._body.Position);
+            if (_exitState == ExitState.Idle) _cue.Draw(spriteBatch, _ball._body.Position);
 
-            spriteBatch.DrawString(FontTitle, title, new Vector2(Constants.GAME_WIDTH / 2, Constants.GAME_HEIGHT / 4) - FontTitle.MeasureString(title) / 2, _colorPallete[4]);
-
-            spriteBatch.DrawString(Font, "Classic", new Vector2(Constants.GAME_WIDTH / 4, Constants.GAME_HEIGHT * .7f - 35) - Font.MeasureString("Classic") / 2, _colorPallete[4]);
-            spriteBatch.DrawString(Font, "Endless", new Vector2(Constants.GAME_WIDTH / 2, Constants.GAME_HEIGHT * .7f - 35) - Font.MeasureString("Endless") / 2, _colorPallete[4]);
-            spriteBatch.DrawString(Font, "Exit", new Vector2(Constants.GAME_WIDTH * 3 / 4, Constants.GAME_HEIGHT * .7f - 35) - Font.MeasureString("Exit") / 2, _colorPallete[4]);
+            DrawText(FontTitle, spriteBatch, _title, .5f, .25f);
+            DrawText(ScreenManager.Font, spriteBatch, "Classic", .25f, .7f, -35);
+            DrawText(ScreenManager.Font, spriteBatch, "Endless", .5f, .7f, -35);
+            DrawText(ScreenManager.Font, spriteBatch, "Exit", .75f, .7f, -35);
 
             spriteBatch.End();
 
             _fireworks.Draw(gameTime);
         }
 
-        protected override void DrawBoard(ref SpriteBatch spriteBatch, Color lighter, Color darker)
+        protected void DrawText(SpriteFont font, SpriteBatch spriteBatch, string text, float xMultiplier, float yMultiplier, float yOffset = 0f)
         {
-            _tilemap.Draw(spriteBatch, lighter);
+            spriteBatch.DrawString(
+                font,
+                text,
+                new Vector2(
+                    Constants.GAME_WIDTH * xMultiplier,
+                    Constants.GAME_HEIGHT * yMultiplier + yOffset)
+                        - font.MeasureString(text) / 2,
+                _monochrome.TextLight);
+        }
+
+        protected void DrawTileMap(Color color)
+        {
+            _tilemap.Draw(ScreenManager.SpriteBatch, color);
         }
     }
 }

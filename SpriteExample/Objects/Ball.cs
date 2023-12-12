@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using tainicom.Aether.Physics2D.Dynamics;
 using tainicom.Aether.Physics2D.Dynamics.Contacts;
+using WrongHole.Utils;
 
 namespace WrongHole.Objects
 {
@@ -42,8 +43,8 @@ namespace WrongHole.Objects
         /// <param name="contentManager">The content manager to use</param>
         public virtual void LoadContent(ContentManager contentManager)
         {
-            _texture = contentManager.Load<Texture2D>(this._textureName);
-            hit = contentManager.Load<SoundEffect>("hitHurt");
+            _texture = contentManager.Load<Texture2D>(Constants.TEXTURE_PATH + this._textureName);
+            hit = contentManager.Load<SoundEffect>(Constants.SOUND_PATH + "hitHurt");
         }
 
         public virtual void Update(GameTime gameTime)
